@@ -1,0 +1,68 @@
+{
+  "version": "0.0.1",
+  "license": "MIT",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "dev": "tsdx watch",
+    "test": "tsdx test",
+    "lint": "tsdx lint",
+    "size": "size-limit",
+    "analyze": "size-limit --why"
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "name": "@wallet/cosmos-new",
+  "author": "ThanhTam",
+  "size-limit": [
+    {
+      "path": "dist/base.cjs.production.min.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/base.esm.js",
+      "limit": "10 KB"
+    }
+  ],
+  "devDependencies": {
+    "@size-limit/preset-small-lib": "^8.1.0",
+    "@types/bitcoinjs-lib": "^5.0.0",
+    "@types/hdkey": "^2.0.1",
+    "@types/lodash-es": "^4.17.6",
+    "@typescript-eslint/eslint-plugin": "^6.1.0",
+    "bip39": "^3.1.0",
+    "eslint": "^8.0.1",
+    "eslint-config-standard-with-typescript": "^38.0.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-n": "^15.0.0 || ^16.0.0 ",
+    "eslint-plugin-promise": "^6.0.0",
+    "patch-package": "^6.4.7",
+    "size-limit": "^8.1.0",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.4.1",
+    "typescript": "*"
+  },
+  "dependencies": {
+    "@wallet/constants": "workspace:*",
+    "@wallet/core": "workspace:*",
+    "@wallet/utils": "workspace:*",
+    "axios": "^1.3.5",
+    "buffer": "6.0.3",
+
+    "base64-js": "^1.5.1",
+    "bech32": "^2.0.0",
+    "cosmjs-types": "^0.9.0",    
+    "ethereum-cryptography": "^3.0.0"
+  }
+}
