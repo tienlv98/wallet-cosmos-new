@@ -1,6 +1,6 @@
 import {BinaryReader} from 'cosmjs-types/binary'
 import base64js from 'base64-js'
-import bech32 from 'bech32'
+import {bech32} from 'bech32'
 import {ripemd160} from 'ethereum-cryptography/ripemd160.js'
 import {sha256} from 'ethereum-cryptography/sha256.js'
 

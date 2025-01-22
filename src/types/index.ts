@@ -6,8 +6,8 @@ export interface IAccountInfo {
     typeUrl: string
     value: Uint8Array
   }
-  accountNumber: number
-  sequence: number
+  accountNumber: bigint
+  sequence: bigint
 }
 
 export interface BankExtension {

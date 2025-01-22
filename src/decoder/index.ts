@@ -34,8 +34,8 @@ const decodeAccount = (data: Uint8Array) => {
       typeUrl: '',
       value: new Uint8Array()
     },
-    accountNumber: 0,
-    sequence: 0
+    accountNumber: BigInt(0),
+    sequence: BigInt(0)
   }
   while (reader.pos < end) {
     const tag = reader.uint32()
@@ -47,10 +47,10 @@ const decodeAccount = (data: Uint8Array) => {
         message.pubKey = Any.decode(reader, reader.uint32())
         break
       case 3:
-        message.accountNumber = Number(reader.uint64())
+        message.accountNumber = reader.uint64()
         break
       case 4:
-        message.sequence = Number(reader.uint64())
+        message.sequence = reader.uint64()
         break
       default:
         reader.skipType(tag & 7)

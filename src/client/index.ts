@@ -2,11 +2,13 @@ import { IBaseRpc, IExtension } from "../types"
 
 export class CosmosClientNew {
   baseRpc: IBaseRpc
+  rpc: string = ''
   constructor(rpc: string, extensionSetups: IExtension[]) {
+    this.rpc = rpc
     this.baseRpc = async (method: string, data: any) => {
       const myHeaders = new Headers()
       myHeaders.append('Content-Type', 'application/json')
-      const response = await fetch(rpc, {
+      const response = await fetch(this.rpc, {
         method: 'POST',
         headers: myHeaders,
         body: JSON.stringify({
@@ -25,6 +27,10 @@ export class CosmosClientNew {
         (this as any)[moduleKey] = moduleValue
       }
     }
+  }
+
+  updateConfig(params: any) {
+    this.rpc = params.rpc
   }
 }
 
