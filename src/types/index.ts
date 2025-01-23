@@ -16,6 +16,7 @@ export interface BankExtension {
     readonly broadcastTx: (rawtx: string) => Promise<string>
     readonly account: (address: string) => Promise<IAccountInfo>
     readonly simalate: (messages: any, sequence: number) => Promise<number>
+    readonly queryContractSmart: (contract: string, dataQuery: any) => Promise<any>
   }
 }
 

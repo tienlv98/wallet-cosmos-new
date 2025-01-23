@@ -185,6 +185,33 @@ const decodeSimulate = (data: Uint8Array) => {
   return Number(message.gasInfo.gasUsed)
 }
 
+const encodeQueryContractSmart = (contract: string, dataQuery: any) => {
+  const writer = BinaryWriter.create()
+  writer.uint32(10).string(contract)
+  writer.uint32(18).bytes(Buffer.from(JSON.stringify(dataQuery), 'utf8'))
+  return Buffer.from(writer.finish()).toString('hex')
+}
+
+const decodeQueryContractSmart = (data: Uint8Array) => {
+  const reader = new BinaryReader(data)
+  let end = reader.len
+  const message = {
+    data: new Uint8Array()
+  }
+  while (reader.pos < end) {
+    const tag = reader.uint32()
+    switch (tag >>> 3) {
+      case 1:
+        message.data = reader.bytes()
+        break
+      default:
+        reader.skipType(tag & 7)
+        break
+    }
+  }
+  return JSON.parse(Buffer.from(message.data).toString('utf8'))
+}
+
 const accountOkla = {
   encode: encodeAccount,
   decode: decodeAccount
@@ -200,4 +227,9 @@ const simulateOkla = {
   decode: decodeSimulate
 }
 
-export {accountOkla, balanceOkla, simulateOkla}
+const queryContractSmart = {
+  encode: encodeQueryContractSmart,
+  decode: decodeQueryContractSmart
+}
+
+export {accountOkla, balanceOkla, simulateOkla, queryContractSmart}

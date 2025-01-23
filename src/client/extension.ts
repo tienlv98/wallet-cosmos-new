@@ -1,4 +1,4 @@
-import {balanceOkla, accountOkla, simulateOkla} from '../decoder'
+import {balanceOkla, accountOkla, simulateOkla, queryContractSmart} from '../decoder'
 import {IBaseRpc, BankExtension} from '../types'
 import {decodeAbciQuery} from '../utils'
 
@@ -32,7 +32,7 @@ export const setupBankExtension = (client: IBaseRpc): BankExtension => {
         return accountOkla.decode(dataRaw.value)
       },
       simalate: async (messages: any, sequence: number) => {
-        const dataRequest = simulateOkla.encode(messages,sequence)
+        const dataRequest = simulateOkla.encode(messages, sequence)
         const rawData = await client('abci_query', {
           path: '/cosmos.tx.v1beta1.Service/Simulate',
           data: dataRequest,
@@ -40,6 +40,16 @@ export const setupBankExtension = (client: IBaseRpc): BankExtension => {
         })
         const dataRaw = decodeAbciQuery(rawData)
         return simulateOkla.decode(dataRaw.value)
+      },
+      queryContractSmart: async (contract: string, dataQuery: any) => {
+        const dataRequest = queryContractSmart.encode(contract, dataQuery)
+        const rawData = await client('abci_query', {
+          path: '/cosmwasm.wasm.v1.Query/SmartContractState',
+          data: dataRequest,
+          prove: false
+        })
+        const dataRaw = decodeAbciQuery(rawData)
+        return queryContractSmart.decode(dataRaw.value)
       }
     }
   }
