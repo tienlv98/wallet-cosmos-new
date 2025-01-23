@@ -1,4 +1,4 @@
-import { balanceOkla, accountOkla } from '../decoder'
+import {balanceOkla, accountOkla, simulateOkla} from '../decoder'
 import {IBaseRpc, BankExtension} from '../types'
 import {decodeAbciQuery} from '../utils'
 
@@ -6,7 +6,7 @@ export const setupBankExtension = (client: IBaseRpc): BankExtension => {
   return {
     bank: {
       balance: async (address: string, denom: string) => {
-        const dataRequest = balanceOkla.encode(address,denom)
+        const dataRequest = balanceOkla.encode(address, denom)
         const rawData = await client('abci_query', {
           path: '/cosmos.bank.v1beta1.Query/Balance',
           data: dataRequest,
@@ -30,6 +30,16 @@ export const setupBankExtension = (client: IBaseRpc): BankExtension => {
         })
         const dataRaw = decodeAbciQuery(rawData)
         return accountOkla.decode(dataRaw.value)
+      },
+      simalate: async (messages: any, sequence: number) => {
+        const dataRequest = simulateOkla.encode(messages,sequence)
+        const rawData = await client('abci_query', {
+          path: '/cosmos.tx.v1beta1.Service/Simulate',
+          data: dataRequest,
+          prove: false
+        })
+        const dataRaw = decodeAbciQuery(rawData)
+        return simulateOkla.decode(dataRaw.value)
       }
     }
   }

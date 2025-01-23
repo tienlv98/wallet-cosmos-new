@@ -24,7 +24,7 @@ import {
   Wallet
 } from '@wallet/core'
 import {CHAIN_DATA, CHAIN_TYPE} from '@wallet/constants'
-import { convertBalanceToWei } from '@wallet/utils'
+import {convertBalanceToWei} from '@wallet/utils'
 import {ChainConfigs, COSMOS_DEFAULT_GAS} from '../constants'
 import {CosmosClientNew} from '../client'
 import {setupBankExtension} from '../client/extension'
@@ -37,6 +37,7 @@ const INFORMATION_C98_API = 'https://superwallet-information-api.coin98.tech'
 export class CosmosEngine extends Engine {
   chain?: Chain | undefined
   chainInfo: CosmosChainInfo[] = ChainConfigs
+  private defaultGasMultiplier = 1.4
   client: CosmosClientNew & ReturnType<typeof setupBankExtension>
   constructor(_config?: EngineConfiguration) {
     super(_config)
@@ -99,11 +100,11 @@ export class CosmosEngine extends Engine {
   }
 
   public transfer = async (params: TransferParams<TransferOptions>): Promise<string> => {
-    const {transaction, wallet, isEstimateGas, gasLimit, gasPrice, chain} = params
+    const {transaction, wallet, isEstimateGas, chain} = params
     const {memo = '', amount: amountBalance, to, asset, token} = transaction
     const config = await this.fetchChainInfo(chain)
 
-    this.client.updateConfig({rpc: config.rpc})  
+    this.client.updateConfig({rpc: config.rpc})
     const denom = config.currencies[0].coinMinimalDenom
     const decimal = token?.decimal ?? config.currencies[0]?.coinDecimals
     const amount = convertBalanceToWei(amountBalance, decimal)
@@ -118,12 +119,17 @@ export class CosmosEngine extends Engine {
     //   })
     // }
     rawTransaction = encodeDataTx.encodeTransferNative(wallet.address, to, amount, asset || denom)
+    let [gasLimit, gasPrice] = [params.gasLimit, params.gasPrice]
+    if (!gasLimit) {
+      gasLimit = await this.client.bank.simalate(rawTransaction, Number(sequence))
+      gasPrice = String(this.defaultGasMultiplier * gasLimit * config.gasPriceStep?.average)
+    }
     const fee = {
-      gas: '250000',
+      gas: String(gasLimit),
       amount: [
         {
           denom: denom,
-          amount: '37500'
+          amount: String(gasPrice)
         }
       ]
     }
